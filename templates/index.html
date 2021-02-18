@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Mapeador argentina</title>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+  integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+  <style>
+    #color-scheme-preview [class^="border"] {
+        display: inline-block;
+        width: 2rem;
+        height: 2rem;
+        margin: .15rem;
+    }
+    #output {
+        display: grid;
+        height: 100%;
+    }
+    #output-img {
+        max-width: 100%;
+        max-height: 100vh;
+        margin: auto;
+    }
+  </style>
+</head>
+
+  <main role="main" class="container">
+
+    <div class="starter-template">
+      <h1>Mapeador por provincias</h1>
+      <p class="lead">Arma un mapa de Argentina en base a un archivo que le subas.</p>
+      <h5>Instrucciones</h5>
+      <ul>
+        <li>Subir un archivo excel o csv, una columna tiene que ser la provincia con el ID de INDEC y otra la variable a mapear</li>
+        <li>Elgir que columna es la provincia y cual es la variable a mapear</li>
+        <li>Elegir la paleta de colores, hay que pasar una lista separada por comas, lo ideal es usar <a href="https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3" alt="Color brewer">ColorBrewer 2.0</a></li>
+        <li>Elegir cada qué valores querés hacer la división</li>
+        <li>Darle al botón generar</li>
+      </ul>
+    </div>
+    <form id="form">
+      <div class="custom-file">
+        <input type="file" class="custom-file-input" id="file" accept=".xls, .xlsx, .csv">
+        <label class="custom-file-label" for="customFile">Subir archivo</label>
+      </div>
+      <div class="custom-file">
+        <label class="label" for="select-headers"></label>
+      </div>
+      
+      <!-- preview -->
+      <div class="form-group">
+        <label for="preview-data">Preview de datos cargados</label>
+        <div id="preview-data"></div>
+      </div>
+
+      <!-- selects -->
+      <div class="form-group">
+        <label for="select-headers-provincia">¿Qué columna es provincia?</label>
+        <select id="select-headers-provincia" class="select-headers"></select>
+      </div>
+      <div class="form-group">
+        <label for="select-headers-data">¿Qué columna es la data?</label>
+        <select id="select-headers-data" class="select-headers"></select>
+      </div>
+      <div class="form-group">
+        <label for="color-scheme">Paleta de colores</label>
+        <input id="color-scheme" value=""></input>
+        <div id="color-scheme-preview">
+
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="title">Título del gráfico</label>
+        <input id="title" value=""></input>
+      </div>
+      <div class="form-group">
+        <label for="classification">Divisiones</label>
+        <input id="classification" value="0,10000,30000,60000,120000,240000,350000"></input>
+      </div>
+      <button id="submit-btn" type="submit" class="btn btn-primary">Generar</button>
+    </form>
+    <div id="output">
+      <img style="visibility:hidden;" id="output-img" src="" alt="Mapa">
+    </div>
+  </main><!-- /.container -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+  
+  <!-- additional libraries  -->
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  
+  <!-- custom js -->
+  <script src="{{ url_for('static', filename='js/loadExcel.js') }}"></script>
+
+</body>
+
+</html>
