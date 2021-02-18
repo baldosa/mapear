@@ -71,6 +71,8 @@ def mapping():
     plt.savefig(aio, format='png')
     data = base64.encodestring(aio.getvalue())
 
+    del df
+    del gdf
 
     return data
 
