@@ -22,37 +22,37 @@ fileSelector.addEventListener('change', (event) => {
       var json_object = XL_row_object;
 
       // lo muestor en la preview
-      output = document.getElementById('preview-data')
-      output.innerHTML = json2Table(json_object)
+      output = document.getElementById('preview-data');
+      output.innerHTML = json2Table(json_object);
       // genero los selects para elegir las cosas
-      choicesFromData(json_object)
-      jsonData = json_object
+      choicesFromData(json_object);
+      jsonData = json_object;
+      console.log('done xls');
     })
   };
   reader.onerror = function (event) {
-    console.error("File could not be read! Code " + event.target.error.code);
+    alert("Hubo algún tipo de error con el archivo " + event.target.error.code);
   };
-
+  
   reader.readAsBinaryString(selectedFile);
 });
 
 // armo 2 selects con los headers del excel para ver que es cada cosa
 function choicesFromData(jsonData) {
   // select de qué es cada cosa
-  const selectHeaders = document.getElementsByClassName('select-headers')
+  const selectHeaders = document.getElementsByClassName('select-headers');
   Object.keys(jsonData[0]).forEach((el) => {
     Array.from(selectHeaders).forEach((sel) => {
       var option = document.createElement("option");
       option.text = el;
       sel.add(option);
     });
-  })
+  });
 }
 
 // tabla de preview
 function json2Table(jsonData) {
   let cols = Object.keys(jsonData[0]);
-
 
   //Map over columns, make headers,join into string
   let headerRow = cols
@@ -86,7 +86,7 @@ function json2Table(jsonData) {
 }
 // color picker
 function changeColors(colorList) {
-  const output = document.getElementById('color-scheme-preview')
+  const output = document.getElementById('color-scheme-preview');
   
   let rows = colorList
   .map(row => {
@@ -95,29 +95,38 @@ function changeColors(colorList) {
   })
   .join("");
   
-  output.innerHTML = rows
+  output.innerHTML = rows;
 }
 const colorSchemeInput = document.getElementById('color-scheme');
 colorSchemeInput.value = "['#ffffe5','#f7fcb9','#d9f0a3','#addd8e','#78c679','#41ab5d','#238443','#006837','#004529']";
-changeColors(['#ffffe5','#f7fcb9','#d9f0a3','#addd8e','#78c679','#41ab5d','#238443','#006837','#004529'])
+changeColors(['#ffffe5','#f7fcb9','#d9f0a3','#addd8e','#78c679','#41ab5d','#238443','#006837','#004529']);
 
 colorSchemeInput.addEventListener('change', (event) => {
-  const colors = event.target.value.replace(/[\[\]']+/g,'').split(',')
-  changeColors(colors)
+  const colors = event.target.value.replace(/[\[\]']+/g,'').split(',');
+  changeColors(colors);
 
 });
 
 // send data to backend
-button = document.getElementById('form')
-button.addEventListener('submit', (event) => {
+form = document.getElementById('form');
+form.addEventListener('submit', (event) => {
   event.preventDefault();
+  
+  var btn = document.getElementById('submit-btn');
+  var loadingText = '<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Generando...span></div>\
+                     Generando...</span></div>';
+  btn.innerHTML = loadingText;
+  btn.disabled = true;
+  
   formData = {
     data: jsonData,
     colors: document.getElementById('color-scheme').value.replace(/[\[\]']+/g,'').split(','),
     provincia: document.getElementById('select-headers-provincia').value,
     datos: document.getElementById('select-headers-data').value,
     title: document.getElementById('title').value,
-    classification: document.getElementById('classification').value.split(',')
+    classification: document.getElementById('classification').value.split(','),
+    datatable: document.getElementById('datatable').checked,
+    legend: document.getElementById('color-legend').checked
   }
   // console.log(formData)
   // request options
@@ -127,7 +136,7 @@ button.addEventListener('submit', (event) => {
     headers: {
       'Content-Type': 'application/json'
     }
-  }
+  };
 
   // send post request
   fetch('/process', options)
@@ -138,6 +147,9 @@ button.addEventListener('submit', (event) => {
               'src', 'data:image/png;base64, '+res
           );
       document.getElementById('output-img').style.visibility = "visible";
+
+      btn.innerHTML = 'Generar'
+      btn.disabled = false;
     })
     .catch(err => console.log(err));
 

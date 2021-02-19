@@ -9,6 +9,7 @@ import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import matplotlib.colors as pltcolors
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 matplotlib.use('Agg')
 
 
@@ -29,48 +30,58 @@ def hello():
 
 @app.route('/process', methods=['POST'])
 def mapping():
-    # get content
     content = request.json
-    # make dataframes
+
+    # dataframes
     df = pd.DataFrame(content['data'])
-    file = 'data/provincias.json'
+    file = 'data/provincias-noantartida.json'
     gdf = gpd.read_file(file)
     df = pd.merge(gdf, df, right_on='id', left_on=content['provincia'])
+    df[content['datos']] = df[content['datos']].round(decimals=2)
 
-    
-    # settings
+    # color settings
     cmap_colors = pltcolors.LinearSegmentedColormap.from_list(
         "", content['colors'])
-    
-    # # plot bebings
-    # fig = plt.figure()
-    # ax = fig.add_subplot(1, 1, 1)
 
-    # # plot plots
-    # df.plot(
-    #     column=content['datos'],
-    #     ax=ax,
-    #     cmap=cmap_colors,
-    # )
+    # plot
+    ax = df.plot(column=content['datos'],
+                 cmap=cmap_colors,
+                 figsize=(30, 13),
+                 edgecolor="grey",
+                 linewidth=1,
+                 legend=content['legend'],
+                 scheme="userdefined",
+                 classification_kwds={'bins': [float(i) for i in content['classification']]})
 
-    # fig = plt.figure()
-    ax = df.plot(
-        column=content['datos'],
-        cmap=cmap_colors,
-        edgecolor="grey",
-        linewidth=1,
-        legend=True,
-        classification_kwds={'bins': content['classification']}
-        )
-    # leg = ax.get_legend()
-    # leg.set_bbox_to_anchor((0.8, 0.05, 0.2, 0.2))
+    ax.axes.get_xaxis().set_visible(False)
+    ax.axes.get_yaxis().set_visible(False)
     plt.title(content['title'])
 
+    # legend
+    if content['legend']:
+        leg = ax.get_legend()
+        leg.set_bbox_to_anchor((1.4, 0.05, 0.2, 0.2))
 
+    # datatable
+    if content['datatable']:
+        col_labels = ['Provincia', 'Cantidad']
+        df_table = df[['name', content['datos']]].sort_values(
+            by=content['datos'], ascending=False).head(25)
+        table_vals = df_table.values.tolist()
+
+        the_table = plt.table(cellText=table_vals,
+                              colWidths=[0]*len(table_vals),
+                              colLabels=col_labels,
+                              loc='right', zorder=3)
+        the_table.auto_set_column_width(col=list(range(len(table_vals))))
+
+    # bytesio output
     aio = io.BytesIO()
-    plt.savefig(aio, format='png')
+
+    plt.savefig(aio, format='png', bbox_inches='tight')
     data = base64.encodestring(aio.getvalue())
 
+    # freewilly
     del df
     del gdf
 
@@ -80,6 +91,10 @@ def mapping():
 def help():
     return "Returns help"
 
+
+@app.route('/test', methods=['POST'])
+def mappingtest():
+    return ''
 
 if __name__ == '__main__':
     app.run()

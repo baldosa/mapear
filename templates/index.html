@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Mapeador argentina</title>
+  <title>Mapeador Argentina</title>
 
   <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
@@ -28,6 +28,17 @@
         max-height: 100vh;
         margin: auto;
     }
+    .bd-example-modal-lg .modal-dialog{
+      display: table;
+      position: relative;
+      margin: 0 auto;
+      top: calc(50% - 24px);
+    }
+    
+    .bd-example-modal-lg .modal-dialog .modal-content{
+      background-color: transparent;
+      border: none;
+    }
   </style>
 </head>
 
@@ -42,6 +53,7 @@
         <li>Elgir que columna es la provincia y cual es la variable a mapear</li>
         <li>Elegir la paleta de colores, hay que pasar una lista separada por comas, lo ideal es usar <a href="https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3" alt="Color brewer">ColorBrewer 2.0</a></li>
         <li>Elegir cada qué valores querés hacer la división</li>
+        <li>Elegir si querés que muestre la tabla de datos y las leyendas</li>
         <li>Darle al botón generar</li>
       </ul>
     </div>
@@ -84,6 +96,20 @@
         <label for="classification">Divisiones</label>
         <input id="classification" value="0,10000,30000,60000,120000,240000,350000"></input>
       </div>
+      <div class="form-group">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="datatable">
+          <label class="form-check-label" for="datatable">
+            Incluir tabla de datos
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="color-legend">
+          <label class="form-check-label" for="color-legend">
+            Incluir leyenda de colores
+          </label>
+        </div>
+      </div>
       <button id="submit-btn" type="submit" class="btn btn-primary">Generar</button>
     </form>
     <div id="output">
@@ -101,6 +127,16 @@
   <!-- custom js -->
   <script src="{{ url_for('static', filename='js/loadExcel.js') }}"></script>
 
+  <!-- spinner -->
+  <!-- <div id="loading" class="modal fade bd-example-modal-lg" data-backdrop="static" data-keyboard="false" tabindex="-1">
+      <div class="modal-dialog modal-sm">
+          <div class="modal-content" style="width: 48px">
+              <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+          </div>
+      </div>
+  </div> -->
 </body>
 
 </html>
