@@ -66,7 +66,7 @@ def mapping():
     if content['datatable']:
         col_labels = ['Provincia', 'Cantidad']
         df_table = df[['name', content['datos']]].sort_values(
-            by=content['datos'], ascending=False).head(25)
+            by='name', ascending=True).head(25)
         table_vals = df_table.values.tolist()
 
         the_table = plt.table(cellText=table_vals,

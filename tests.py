@@ -20,4 +20,9 @@ df = df.drop(columns=['centr_lat'])
 df = df.drop(columns=['nombre'])
 
 #%%
+df.to_file("data/provincias-na.json", driver='GeoJSON')
+
+
+#%%
+df.drop(15, inplace=True)
 df
