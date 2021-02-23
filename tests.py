@@ -136,7 +136,7 @@ content = {
 }
 #%%
 df = pd.DataFrame(content['data'])
-file = 'data/provincias-noantartida.json'
+file = 'data/provincias-na.json'
 gdf = gpd.read_file(file)
 df = pd.merge(gdf, df, right_on='id', left_on=content['provincia'])
 df[content['datos']] = df[content['datos']].round(decimals=2)

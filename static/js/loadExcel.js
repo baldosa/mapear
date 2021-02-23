@@ -27,7 +27,7 @@ fileSelector.addEventListener('change', (event) => {
       // genero los selects para elegir las cosas
       choicesFromData(json_object);
       jsonData = json_object;
-      console.log('done xls');
+      // console.log('done xls');
     })
   };
   reader.onerror = function (event) {
@@ -138,7 +138,7 @@ form.addEventListener('submit', (event) => {
     }
   };
 
-  // send post request
+  // send post request+
   fetch('/process', options)
     .then(res => res.text())
     .then((res) => {
@@ -147,10 +147,13 @@ form.addEventListener('submit', (event) => {
               'src', 'data:image/png;base64, '+res
           );
       document.getElementById('output-img').style.visibility = "visible";
-
+      // console.log(res)
       btn.innerHTML = 'Generar'
       btn.disabled = false;
     })
-    .catch(err => console.log(err));
+    .catch((err) => {
+      console.log(err)
+      alert('Hubo un error, ¿elegiste bien la columna de datos?')
+    });
 
 });
