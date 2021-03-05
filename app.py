@@ -34,7 +34,7 @@ def mapping():
 
     # dataframes
     df = pd.DataFrame(content['data'])
-    file = 'data/provincias-na.json'
+    file = 'data/provincias_sin_antartida.geojson'
     gdf = gpd.read_file(file)
     df = pd.merge(gdf, df, right_on='id', left_on=content['provincia'])
     df[content['datos']] = df[content['datos']].round(decimals=2)
@@ -48,7 +48,7 @@ def mapping():
                  cmap=cmap_colors,
                  figsize=(30, 13),
                  edgecolor="grey",
-                 linewidth=1,
+                 linewidth=0.4,
                  legend=content['legend'],
                  scheme="userdefined",
                  classification_kwds={'bins': [float(i) for i in content['classification']]})

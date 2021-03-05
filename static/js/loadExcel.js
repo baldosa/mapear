@@ -98,8 +98,8 @@ function changeColors(colorList) {
   output.innerHTML = rows;
 }
 const colorSchemeInput = document.getElementById('color-scheme');
-colorSchemeInput.value = "['#ffffe5','#f7fcb9','#d9f0a3','#addd8e','#78c679','#41ab5d','#238443','#006837','#004529']";
-changeColors(['#ffffe5','#f7fcb9','#d9f0a3','#addd8e','#78c679','#41ab5d','#238443','#006837','#004529']);
+colorSchemeInput.value = "['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b']";
+changeColors(['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b']);
 
 colorSchemeInput.addEventListener('change', (event) => {
   const colors = event.target.value.replace(/[\[\]']+/g,'').split(',');
