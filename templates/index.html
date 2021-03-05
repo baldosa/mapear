@@ -39,6 +39,10 @@
       background-color: transparent;
       border: none;
     }
+
+    #output-link {
+      width: 150px !important;
+    }
   </style>
 </head>
 
@@ -112,8 +116,10 @@
       </div>
       <button id="submit-btn" type="submit" class="btn btn-primary">Generar</button>
     </form>
-    <div id="output">
+    <div id="output" class="mt-2">
+      <a style="visibility:hidden;" download="img.png" href="" id="output-link" class="btn btn-success btn-block">Descargar imagen</a>
       <img style="visibility:hidden;" id="output-img" src="" alt="Mapa">
+
     </div>
   </main><!-- /.container -->
 

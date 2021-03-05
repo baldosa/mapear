@@ -146,6 +146,8 @@ form.addEventListener('submit', (event) => {
           .setAttribute(
               'src', 'data:image/png;base64, '+res
           );
+      document.getElementById('output-link').style.visibility = "visible";
+      document.getElementById('output-link').href = 'data:application/octet-stream;base64, '+res;
       document.getElementById('output-img').style.visibility = "visible";
       // console.log(res)
       btn.innerHTML = 'Generar'
