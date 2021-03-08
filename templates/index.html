@@ -12,6 +12,9 @@
   <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
   integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+
+
   <style>
     #color-scheme-preview [class^="border"] {
         display: inline-block;
@@ -43,9 +46,10 @@
     #output-link {
       width: 150px !important;
     }
+
   </style>
 </head>
-
+<body>
   <main role="main" class="container">
 
     <div class="starter-template">
@@ -69,7 +73,14 @@
       <div class="custom-file">
         <label class="label" for="select-headers"></label>
       </div>
-      
+      <!-- excel sheets -->
+      <div class="form-group">
+        <label for="sheet-data">Elegí la hoja del excel a usar</label>
+        <select id="sheet-data">
+          <option>Elegí que hoja del excel usar</option>
+        </select>
+      </div>
+
       <!-- preview -->
       <div class="form-group">
         <label for="preview-data">Preview de datos cargados</label>
@@ -85,21 +96,25 @@
         <label for="select-headers-data">¿Qué columna es la data?</label>
         <select id="select-headers-data" class="select-headers"></select>
       </div>
-      <div class="form-group">
-        <label for="color-scheme">Paleta de colores</label>
-        <input id="color-scheme" value=""></input>
-        <div id="color-scheme-preview">
-
-        </div>
-      </div>
+      <!-- title -->
       <div class="form-group">
         <label for="title">Título del gráfico</label>
-        <input id="title" value=""></input>
+        <input id="title" value="">
       </div>
+      <!-- colores y valores -->
       <div class="form-group">
-        <label for="classification">Divisiones</label>
-        <input id="classification" value="0,10000,30000,60000,120000,240000,350000"></input>
+        <div id="val-buttons" class="my-2">
+          <a href="" class="btn btn-danger" id="less-vals">
+            <i class="bi bi-dash-circle-fill"></i>
+          </a>
+          <a href="" class="btn btn-success" id="more-vals">
+            <i class="bi bi-plus-circle-fill"></i>
+          </a>
+        </div>
+        <div id="colors">
+        </div>
       </div>
+      <!-- misc -->
       <div class="form-group">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" value="" id="datatable">
@@ -117,8 +132,8 @@
       <button id="submit-btn" type="submit" class="btn btn-primary">Generar</button>
     </form>
     <div id="output" class="mt-2">
-      <a style="visibility:hidden;" download="img.png" href="" id="output-link" class="btn btn-success btn-block">Descargar imagen</a>
-      <img style="visibility:hidden;" id="output-img" src="" alt="Mapa">
+      <a style="visibility:hidden;" download="mapa.png" href="" id="output-link" class="btn btn-success btn-block">Descargar imagen</a>
+      <img style="visibility:hidden;" id="output-img" src="a" alt="Mapa">
 
     </div>
   </main><!-- /.container -->
@@ -133,16 +148,6 @@
   <!-- custom js -->
   <script src="{{ url_for('static', filename='js/loadExcel.js') }}"></script>
 
-  <!-- spinner -->
-  <!-- <div id="loading" class="modal fade bd-example-modal-lg" data-backdrop="static" data-keyboard="false" tabindex="-1">
-      <div class="modal-dialog modal-sm">
-          <div class="modal-content" style="width: 48px">
-              <div class="spinner-border" role="status">
-                <span class="sr-only">Loading...</span>
-              </div>
-          </div>
-      </div>
-  </div> -->
 </body>
 
 </html>

@@ -1,34 +1,28 @@
-// // loaded
-// window.onload = function () {
-//   console.log('Page is loaded');
-// };
-// jsonData
-let jsonData = []
-// get file id
-const fileSelector = document.getElementById('file');
+// globales
+let jsonData = [];
+var workbook = null;
 
-// cuando cargo un archivo lo convierto en json
+// cuando cargo un archivo hago elegir la hoja
+let fileSelector = document.getElementById('file');
 fileSelector.addEventListener('change', (event) => {
+
   var selectedFile = event.target.files[0];
   var reader = new FileReader();
   reader.onload = function (event) {
     var data = event.target.result;
-    var workbook = XLSX.read(data, {
+    workbook = XLSX.read(data, {
       type: 'binary'
     });
+
+    // limpio el select y lo populo
+    let select = document.getElementById('sheet-data');
+    select.innerHTML = '<option>Elegí que hoja del excel usar</option>';
     workbook.SheetNames.forEach(function (sheetName) {
+      let option = document.createElement("option");
+      option.text = sheetName;
+      select.add(option);
+    });
 
-      var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-      var json_object = XL_row_object;
-
-      // lo muestor en la preview
-      output = document.getElementById('preview-data');
-      output.innerHTML = json2Table(json_object);
-      // genero los selects para elegir las cosas
-      choicesFromData(json_object);
-      jsonData = json_object;
-      // console.log('done xls');
-    })
   };
   reader.onerror = function (event) {
     alert("Hubo algún tipo de error con el archivo " + event.target.error.code);
@@ -37,10 +31,34 @@ fileSelector.addEventListener('change', (event) => {
   reader.readAsBinaryString(selectedFile);
 });
 
+// preview de la hoja elegida
+document.getElementById('sheet-data').addEventListener('change', (event) => {
+  // jsonData
+  jsonData = [];
+  // console.log(event)
+  // console.log(workbook)
+  sheetName = document.getElementById('sheet-data').value;
+
+  var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+  var json_object = XL_row_object;
+
+  // lo muestor en la preview
+  output = document.getElementById('preview-data');
+  output.innerHTML = json2Table(json_object);
+  // genero los selects para elegir las cosas
+  choicesFromData(json_object);
+  jsonData = json_object;
+  // console.log(jsonData)
+});
+
+
 // armo 2 selects con los headers del excel para ver que es cada cosa
 function choicesFromData(jsonData) {
   // select de qué es cada cosa
-  const selectHeaders = document.getElementsByClassName('select-headers');
+  let selectHeaders = document.getElementsByClassName('select-headers');
+  Array.from(selectHeaders).forEach((sel) => {
+    sel.innerHTML = '<option>Elegí que columna del excel usar</option>';
+  })
   Object.keys(jsonData[0]).forEach((el) => {
     Array.from(selectHeaders).forEach((sel) => {
       var option = document.createElement("option");
@@ -72,7 +90,7 @@ function json2Table(jsonData) {
     .join("");
 
   //build the table
-  const table = `
+  let table = `
 	<table class="table">
 		<thead>
 			<tr>${headerRow}</tr>
@@ -84,28 +102,6 @@ function json2Table(jsonData) {
 
   return table;
 }
-// color picker
-function changeColors(colorList) {
-  const output = document.getElementById('color-scheme-preview');
-  
-  let rows = colorList
-  .map(row => {
-    let box = `<span class="border" style="background-color:${row}"></span>`
-    return `<tr>${box}</tr>`;
-  })
-  .join("");
-  
-  output.innerHTML = rows;
-}
-const colorSchemeInput = document.getElementById('color-scheme');
-colorSchemeInput.value = "['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b']";
-changeColors(['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b']);
-
-colorSchemeInput.addEventListener('change', (event) => {
-  const colors = event.target.value.replace(/[\[\]']+/g,'').split(',');
-  changeColors(colors);
-
-});
 
 // send data to backend
 form = document.getElementById('form');
@@ -117,20 +113,31 @@ form.addEventListener('submit', (event) => {
                      Generando...</span></div>';
   btn.innerHTML = loadingText;
   btn.disabled = true;
-  
+
+  let values = document.querySelectorAll('.values');
+  let arrVals = []
+  values.forEach(userInput => {
+    arrVals.push(userInput.value);
+  });
+  let colors = document.querySelectorAll('.input-color');
+  let colorVals = []
+  colors.forEach(userInput => {
+    colorVals.push(userInput.value);
+  });
+
   formData = {
     data: jsonData,
-    colors: document.getElementById('color-scheme').value.replace(/[\[\]']+/g,'').split(','),
+    colors: colorVals,
     provincia: document.getElementById('select-headers-provincia').value,
     datos: document.getElementById('select-headers-data').value,
     title: document.getElementById('title').value,
-    classification: document.getElementById('classification').value.split(','),
+    classification: arrVals,
     datatable: document.getElementById('datatable').checked,
     legend: document.getElementById('color-legend').checked
-  }
+  };
   // console.log(formData)
   // request options
-  const options = {
+  let options = {
     method: 'POST',
     body: JSON.stringify(formData),
     headers: {
@@ -140,7 +147,14 @@ form.addEventListener('submit', (event) => {
 
   // send post request+
   fetch('/process', options)
-    .then(res => res.text())
+    .then((res) => {
+      console.log(res)
+      if(res.status === 200) {
+        return res.text()
+      }
+      throw new Error('Something went wrong.');
+
+    })
     .then((res) => {
       document.getElementById('output-img')
           .setAttribute(
@@ -156,6 +170,94 @@ form.addEventListener('submit', (event) => {
     .catch((err) => {
       console.log(err)
       alert('Hubo un error, ¿elegiste bien la columna de datos?')
+      btn.innerHTML = 'Generar'
+      btn.disabled = false;
     });
 
+});
+
+
+// color picker
+
+let colorsAndVals = [
+  [0, '#f7fbff'],
+  [10000, '#deebf7'],
+  [30000, '#c6dbef'],
+  [60000, '#9ecae1'],
+  [120000, '#6baed6'],
+  [240000, '#4292c6'],
+  [350000, '#2171b5'],
+  [600000, '#08519c'],
+  [900000, '#08306b']
+];
+
+function makeColorPicker () {
+  // rows de input de valor + color picker
+  let colorDiv = document.getElementById('colors');
+  colorDiv.innerHTML = '';
+  colorsAndVals.forEach(function (el, i) {
+    let colorRow = `
+            <div class="row">
+              <div class="col-3">
+                <div class="form-group">
+                  <label for="val${i}">Valor ${i}</label>
+                  <input type="number" class="values" id="val${i}" value="${el[0]}">
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="color">
+                  <input type="color" class="input-color" value="${el[1]}">
+                  <div class="invalid-feedback">
+                    No es un color válido.
+                  </div>
+                </div>
+              </div>
+            </div>`;
+    colorDiv.insertAdjacentHTML('beforeend', colorRow);
+  });
+};
+
+// // color picker to input
+// document.querySelectorAll('.input-color').forEach(item => {
+//   item.addEventListener('change', event => {
+//     console.log(item)
+//     console.log(event)
+//     item.nextElementSibling.value = event.target.value
+//   });
+// });
+// // input to color picker
+// document.querySelectorAll('.input-color-text').forEach(item => {
+//   item.addEventListener('change', event => {
+//     console.log(item)
+//     console.log(event)
+//     if (/^#[0-9A-F]{6}$/i.test(event.target.value)) {
+//       item.previousElementSibling.value = event.target.value;
+//       item.classList.remove("is-invalid");
+//     } else {
+//       item.classList.add("is-invalid");
+//       item.value = item.previousElementSibling.value;
+//     }
+//   });
+// });
+
+
+// agrego valores
+document.getElementById('more-vals').addEventListener('click', (event) => {
+  event.preventDefault();
+  colorsAndVals.push([colorsAndVals[colorsAndVals.length - 1][0]+1, '#'+Math.floor(Math.random()*16777215).toString(16)]);
+  makeColorPicker();
+});
+
+// quito valores
+document.getElementById('less-vals').addEventListener('click', (event) => {
+  event.preventDefault();
+  if (colorsAndVals.length > 2) {
+    colorsAndVals.pop()
+    makeColorPicker();
+  }
+});
+
+  // loaded doc
+document.addEventListener('DOMContentLoaded', function () {
+    makeColorPicker();
 });
