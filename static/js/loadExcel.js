@@ -288,21 +288,21 @@ document.getElementById('classification').addEventListener('change', (event) => 
     console.log('getClassEqInterval', datas.getClassEqInterval(inter));
     classValues = datas.getClassEqInterval(inter);
   }
-  if (classificacion == '2') {
-    console.log('getClassQuantile', datas.getClassQuantile(inter));
-    classValues = datas.getClassQuantile(inter);
+  if (classificacion == '4') {
+        console.log('getClassGeometricProgression', datas.getClassGeometricProgression(inter));
+    classValues = datas.getClassGeometricProgression(inter);
   }
-  if (classificacion == '3') {
+  if (classificacion == '2') {
     console.log('getClassStdDeviation', datas.getClassStdDeviation(inter));
     classValues = datas.getClassStdDeviation(inter);
   }
-  if (classificacion == '4') {
+  if (classificacion == '3') {
     console.log('getClassArithmeticProgression', datas.getClassArithmeticProgression(inter));
     classValues = datas.getClassArithmeticProgression(inter);
   }
   if (classificacion == '5') {
-    console.log('getClassGeometricProgression', datas.getClassGeometricProgression(inter));
-    classValues = datas.getClassGeometricProgression(inter);
+    console.log('getClassQuantile', datas.getClassQuantile(inter));
+    classValues = datas.getClassQuantile(inter);
   }
   if (classificacion == '6') {
     console.log('getClassJenks', datas.getClassJenks(inter));
