@@ -275,8 +275,7 @@ document.getElementById('select-headers-data').addEventListener('change', (event
 
 });
 
-
-document.getElementById('classification').addEventListener('change', (event) => {
+function makeIntervalos () {
   let inter = parseInt(document.getElementById('intervalos').value);
   let e = document.getElementById('classification');
   let classificacion =  e.value;
@@ -310,8 +309,10 @@ document.getElementById('classification').addEventListener('change', (event) => 
   }
 
   classValues.pop();
-  const colors = ['#eff3ff','#c6dbef','#9ecae1','#6baed6','#3182bd','#08519c'];
   
+  const colors = palletes[inter];
+
+  console.log(colors);
   const colorsAndVals = [];
   
   classValues.forEach((el, i) => {
@@ -319,6 +320,76 @@ document.getElementById('classification').addEventListener('change', (event) => 
   });
   
   makeColorPicker(colorsAndVals);
-
+}
+document.getElementById('classification').addEventListener('change', (event) => {
+  makeIntervalos();
 });
 
+document.getElementById('intervalos').addEventListener('change', (event) => {
+  makeIntervalos();
+});
+
+
+const palletes = {
+    "2": [
+        "#deebf7",
+        "#9ecae1",
+        "#3182bd"
+    ],
+    "3": [
+        "#deebf7",
+        "#9ecae1",
+        "#3182bd"
+    ],
+    "4": [
+        "#eff3ff",
+        "#bdd7e7",
+        "#6baed6",
+        "#2171b5"
+    ],
+    "5": [
+        "#eff3ff",
+        "#bdd7e7",
+        "#6baed6",
+        "#3182bd",
+        "#08519c"
+    ],
+    "6": [
+        "#eff3ff",
+        "#c6dbef",
+        "#9ecae1",
+        "#6baed6",
+        "#3182bd",
+        "#08519c"
+    ],
+    "7": [
+        "#eff3ff",
+        "#c6dbef",
+        "#9ecae1",
+        "#6baed6",
+        "#4292c6",
+        "#2171b5",
+        "#084594"
+    ],
+    "8": [
+        "#f7fbff",
+        "#deebf7",
+        "#c6dbef",
+        "#9ecae1",
+        "#6baed6",
+        "#4292c6",
+        "#2171b5",
+        "#084594"
+    ],
+    "9": [
+        "#f7fbff",
+        "#deebf7",
+        "#c6dbef",
+        "#9ecae1",
+        "#6baed6",
+        "#4292c6",
+        "#2171b5",
+        "#08519c",
+        "#08306b"
+    ]
+};
