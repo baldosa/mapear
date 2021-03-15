@@ -49,6 +49,7 @@ document.getElementById('sheet-data').addEventListener('change', (event) => {
   choicesFromData(json_object);
   jsonData = json_object;
   // console.log(jsonData)
+
 });
 
 
@@ -179,19 +180,19 @@ form.addEventListener('submit', (event) => {
 
 // color picker
 
-let colorsAndVals = [
-  [0, '#f7fbff'],
-  [10000, '#deebf7'],
-  [30000, '#c6dbef'],
-  [60000, '#9ecae1'],
-  [120000, '#6baed6'],
-  [240000, '#4292c6'],
-  [350000, '#2171b5'],
-  [600000, '#08519c'],
-  [900000, '#08306b']
-];
+// let colorsAndVals = [
+//   [0, '#f7fbff'],
+//   [10000, '#deebf7'],
+//   [30000, '#c6dbef'],
+//   [60000, '#9ecae1'],
+//   [120000, '#6baed6'],
+//   [240000, '#4292c6'],
+//   [350000, '#2171b5'],
+//   [600000, '#08519c'],
+//   [900000, '#08306b']
+// ];
 
-function makeColorPicker () {
+function makeColorPicker (colorsAndVals) {
   // rows de input de valor + color picker
   let colorDiv = document.getElementById('colors');
   colorDiv.innerHTML = '';
@@ -241,23 +242,83 @@ function makeColorPicker () {
 // });
 
 
-// agrego valores
-document.getElementById('more-vals').addEventListener('click', (event) => {
-  event.preventDefault();
-  colorsAndVals.push([colorsAndVals[colorsAndVals.length - 1][0]+1, '#'+Math.floor(Math.random()*16777215).toString(16)]);
-  makeColorPicker();
+// // agrego valores
+// document.getElementById('more-vals').addEventListener('click', (event) => {
+//   event.preventDefault();
+//   colorsAndVals.push([colorsAndVals[colorsAndVals.length - 1][0]+1, '#'+Math.floor(Math.random()*16777215).toString(16)]);
+//   makeColorPicker();
+// });
+
+// // quito valores
+// document.getElementById('less-vals').addEventListener('click', (event) => {
+//   event.preventDefault();
+//   if (colorsAndVals.length > 2) {
+//     colorsAndVals.pop()
+//     makeColorPicker();
+//   }
+// });
+
+//   // loaded doc
+// document.addEventListener('DOMContentLoaded', function () {
+//     makeColorPicker();
+// });
+
+let values = []
+document.getElementById('select-headers-data').addEventListener('change', (event) => {
+  let col = document.getElementById('select-headers-data').value;
+  values = jsonData.map(a => a[col]);
+
+  console.log(values)
+  let datas = new geostats(values);
+  document.getElementById('data-info').innerHTML = datas.info()
+  document.getElementById('hidden-form').style.visibility = "visible";
+
 });
 
-// quito valores
-document.getElementById('less-vals').addEventListener('click', (event) => {
-  event.preventDefault();
-  if (colorsAndVals.length > 2) {
-    colorsAndVals.pop()
-    makeColorPicker();
+
+document.getElementById('classification').addEventListener('change', (event) => {
+  let inter = parseInt(document.getElementById('intervalos').value);
+  let e = document.getElementById('classification');
+  let classificacion =  e.value;
+
+  let datas = new geostats(values);
+
+  let classValues = []
+  if (classificacion == '1') {
+    console.log('getClassEqInterval', datas.getClassEqInterval(inter));
+    classValues = datas.getClassEqInterval(inter);
   }
+  if (classificacion == '2') {
+    console.log('getClassQuantile', datas.getClassQuantile(inter));
+    classValues = datas.getClassQuantile(inter);
+  }
+  if (classificacion == '3') {
+    console.log('getClassStdDeviation', datas.getClassStdDeviation(inter));
+    classValues = datas.getClassStdDeviation(inter);
+  }
+  if (classificacion == '4') {
+    console.log('getClassArithmeticProgression', datas.getClassArithmeticProgression(inter));
+    classValues = datas.getClassArithmeticProgression(inter);
+  }
+  if (classificacion == '5') {
+    console.log('getClassGeometricProgression', datas.getClassGeometricProgression(inter));
+    classValues = datas.getClassGeometricProgression(inter);
+  }
+  if (classificacion == '6') {
+    console.log('getClassJenks', datas.getClassJenks(inter));
+    classValues = datas.getClassJenks(inter);
+  }
+
+  classValues.pop();
+  const colors = ['#eff3ff','#c6dbef','#9ecae1','#6baed6','#3182bd','#08519c'];
+  
+  const colorsAndVals = [];
+  
+  classValues.forEach((el, i) => {
+    colorsAndVals.push([el, colors[i]]);
+  });
+  
+  makeColorPicker(colorsAndVals);
+
 });
 
-  // loaded doc
-document.addEventListener('DOMContentLoaded', function () {
-    makeColorPicker();
-});

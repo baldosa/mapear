@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
   integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='js/geostats.css') }}" type="text/css" />
 
 
   <style>
@@ -96,23 +97,41 @@
         <label for="select-headers-data">¿Qué columna es la data?</label>
         <select id="select-headers-data" class="select-headers"></select>
       </div>
-      <!-- title -->
+      <!-- data info -->
       <div class="form-group">
-        <label for="title">Título del gráfico</label>
-        <input id="title" value="">
+        <div id="data-info"></div>
+        <div class="form-group" id="hidden-form" style="visibility:hidden;">
+          <label for="intervalos">Intervalos</label>
+          <input type="number" id="intervalos" value="3" max="6">
+          <label for="classification">Clasificación</label>
+          <select id="classification">
+            <option value="0">Elegí clasificación</option>
+            <option value="1">Intervalos iguales</option>
+            <option value="2">Desviación standard</option>
+            <option value="3">Progresión aritméica</option>
+            <option value="4">Progresión geométrica</option>
+            <option value="5">Cuantiles</option>
+            <option value="6">Clasificación de Jenks</option>
+          </select>
+        </div>
       </div>
       <!-- colores y valores -->
       <div class="form-group">
-        <div id="val-buttons" class="my-2">
+        <!-- <div id="val-buttons" class="my-2">
           <a href="" class="btn btn-danger" id="less-vals">
             <i class="bi bi-dash-circle-fill"></i>
           </a>
           <a href="" class="btn btn-success" id="more-vals">
             <i class="bi bi-plus-circle-fill"></i>
           </a>
-        </div>
+        </div> -->
         <div id="colors">
         </div>
+      </div>
+      <!-- title -->
+      <div class="form-group">
+        <label for="title">Título del gráfico</label>
+        <input id="title" value="">
       </div>
       <!-- misc -->
       <div class="form-group">
@@ -144,7 +163,8 @@
   
   <!-- additional libraries  -->
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
-  
+  <script type="text/javascript" src="{{ url_for('static', filename='js/geostats.min.js') }}"></script>
+
   <!-- custom js -->
   <script src="{{ url_for('static', filename='js/loadExcel.js') }}"></script>
 
