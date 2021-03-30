@@ -308,9 +308,9 @@ function makeIntervalos () {
     classValues = datas.getClassJenks(inter);
   }
 
-  classValues.pop();
+  // classValues.pop();
   
-  const colors = palletes[inter];
+  const colors = palletes[inter+1];
 
   console.log(colors);
   const colorsAndVals = [];

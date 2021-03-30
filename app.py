@@ -34,9 +34,10 @@ def mapping():
 
     # dataframes
     df = pd.DataFrame(content['data'])
+    df['id'] = df[content['provincia']]
     file = 'data/provincias_sin_antartida.geojson'
     gdf = gpd.read_file(file)
-    df = pd.merge(gdf, df, right_on='id', left_on=content['provincia'])
+    df = pd.merge(gdf, df, right_on='id', left_on='id')
     df[content['datos']] = df[content['datos']].round(decimals=2)
 
     # color settings
@@ -79,7 +80,7 @@ def mapping():
     aio = io.BytesIO()
 
     plt.savefig(aio, format='png', bbox_inches='tight')
-    data = base64.encodestring(aio.getvalue())
+    data = base64.encodebytes(aio.getvalue())
 
     # freewilly
     del df
