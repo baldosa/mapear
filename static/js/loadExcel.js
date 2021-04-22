@@ -1,12 +1,13 @@
 // globales
 let jsonData = [];
 var workbook = null;
-
+let imgName = 'img.png'
 // cuando cargo un archivo hago elegir la hoja
 let fileSelector = document.getElementById('file');
 fileSelector.addEventListener('change', (event) => {
 
   var selectedFile = event.target.files[0];
+  imgName = selectedFile.name;
   var reader = new FileReader();
   reader.onload = function (event) {
     var data = event.target.result;
@@ -163,6 +164,8 @@ form.addEventListener('submit', (event) => {
           );
       document.getElementById('output-link').style.visibility = "visible";
       document.getElementById('output-link').href = 'data:application/octet-stream;base64, '+res;
+      document.getElementById('output-link').download = `${imgName.substring(0, imgName.lastIndexOf('.'))}.png`;
+            document.getElementById('output-img').download = `${imgName.substring(0, imgName.lastIndexOf('.'))}.png`;
       document.getElementById('output-img').style.visibility = "visible";
       // console.log(res)
       btn.innerHTML = 'Generar'

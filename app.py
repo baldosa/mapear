@@ -9,6 +9,8 @@ import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import matplotlib.colors as pltcolors
+import matplotlib.ticker as ticker
+
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 matplotlib.use('Agg')
 
@@ -38,7 +40,8 @@ def mapping():
     file = 'data/provincias_sin_antartida.geojson'
     gdf = gpd.read_file(file)
     df = pd.merge(gdf, df, right_on='id', left_on='id')
-    df[content['datos']] = df[content['datos']].round(decimals=2)
+    # df[content['datos']] = df[content['datos']].round(decimals=2)
+    df[content['datos']] = df[content['datos']].astype(int)
 
     # color settings
     cmap_colors = pltcolors.LinearSegmentedColormap.from_list(
@@ -58,6 +61,7 @@ def mapping():
     ax.axes.get_yaxis().set_visible(False)
     plt.title(content['title'])
 
+
     # legend
     if content['legend']:
         leg = ax.get_legend()
@@ -75,6 +79,7 @@ def mapping():
                               colLabels=col_labels,
                               loc='right', zorder=3)
         the_table.auto_set_column_width(col=list(range(len(table_vals))))
+
 
     # bytesio output
     aio = io.BytesIO()
