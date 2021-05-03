@@ -135,10 +135,12 @@ form.addEventListener('submit', (event) => {
     title: document.getElementById('title').value,
     classification: arrVals,
     datatable: document.getElementById('datatable').checked,
-    legend: document.getElementById('color-legend').checked
+    legend: document.getElementById('color-legend').checked,
+    antartida: document.getElementById('antartida').checked
   };
   // console.log(formData)
   // request options
+  console.log(JSON.stringify(formData));
   let options = {
     method: 'POST',
     body: JSON.stringify(formData),
@@ -180,21 +182,6 @@ form.addEventListener('submit', (event) => {
 
 });
 
-
-// color picker
-
-// let colorsAndVals = [
-//   [0, '#f7fbff'],
-//   [10000, '#deebf7'],
-//   [30000, '#c6dbef'],
-//   [60000, '#9ecae1'],
-//   [120000, '#6baed6'],
-//   [240000, '#4292c6'],
-//   [350000, '#2171b5'],
-//   [600000, '#08519c'],
-//   [900000, '#08306b']
-// ];
-
 function makeColorPicker (colorsAndVals) {
   // rows de input de valor + color picker
   let colorDiv = document.getElementById('colors');
@@ -221,50 +208,6 @@ function makeColorPicker (colorsAndVals) {
   });
 };
 
-// // color picker to input
-// document.querySelectorAll('.input-color').forEach(item => {
-//   item.addEventListener('change', event => {
-//     console.log(item)
-//     console.log(event)
-//     item.nextElementSibling.value = event.target.value
-//   });
-// });
-// // input to color picker
-// document.querySelectorAll('.input-color-text').forEach(item => {
-//   item.addEventListener('change', event => {
-//     console.log(item)
-//     console.log(event)
-//     if (/^#[0-9A-F]{6}$/i.test(event.target.value)) {
-//       item.previousElementSibling.value = event.target.value;
-//       item.classList.remove("is-invalid");
-//     } else {
-//       item.classList.add("is-invalid");
-//       item.value = item.previousElementSibling.value;
-//     }
-//   });
-// });
-
-
-// // agrego valores
-// document.getElementById('more-vals').addEventListener('click', (event) => {
-//   event.preventDefault();
-//   colorsAndVals.push([colorsAndVals[colorsAndVals.length - 1][0]+1, '#'+Math.floor(Math.random()*16777215).toString(16)]);
-//   makeColorPicker();
-// });
-
-// // quito valores
-// document.getElementById('less-vals').addEventListener('click', (event) => {
-//   event.preventDefault();
-//   if (colorsAndVals.length > 2) {
-//     colorsAndVals.pop()
-//     makeColorPicker();
-//   }
-// });
-
-//   // loaded doc
-// document.addEventListener('DOMContentLoaded', function () {
-//     makeColorPicker();
-// });
 
 let values = []
 document.getElementById('select-headers-data').addEventListener('change', (event) => {
@@ -311,17 +254,23 @@ function makeIntervalos () {
     classValues = datas.getClassJenks(inter);
   }
 
-  // classValues.pop();
+  classValues.shift();
   
   const colors = palletes[inter+1];
 
-  console.log(colors);
+  console.log(classValues);
   const colorsAndVals = [];
-  
-  classValues.forEach((el, i) => {
-    colorsAndVals.push([el, colors[i]]);
-  });
-  
+  if (document.getElementById('parse-int').checked){
+    classValues.forEach((el, i) => {
+      colorsAndVals.push([Math.round(el), colors[i]]);
+    });
+  } else {
+    classValues.forEach((el, i) => {
+      colorsAndVals.push([el, colors[i]]);
+    });
+  }
+
+  console.log(colorsAndVals);
   makeColorPicker(colorsAndVals);
 }
 document.getElementById('classification').addEventListener('change', (event) => {

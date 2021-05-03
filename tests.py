@@ -1,5 +1,6 @@
 #%%
 from PIL import Image
+from textwrap import wrap
 import matplotlib
 import io
 import base64
@@ -11,98 +12,152 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 # matplotlib.use('Agg')
 # %matplotlib inline
 import numpy as np
+from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
+#bottom_right = (1.4, 0.1)
 
-content = {"data":[
-    {'cod': '74',   'val': 114.05231071276813},
-    {'cod': '02', 'val': 166.89022208667708},
-    {'cod': '14', 'val': 174.76769243042722},
-    {'cod': '82', 'val': 206.36935565874847},
-    {'cod': '26', 'val': 227.98515494495908},
-    {'cod': '50', 'val': 232.25149899162855},
-    {'cod': '86', 'val': 285.6783585621371},
-    {'cod': '18', 'val': 300.2126149066605},
-    {'cod': '42', 'val': 350.39976229535637},
-    {'cod': '62', 'val': 408.2176883669293},
-    {'cod': '58', 'val': 428.95755936613875},
-    {'cod': '30', 'val': 432.9430691051191},
-    {'cod': '70', 'val': 471.88685090058203},
-    {'cod': '90', 'val': 474.4596578892707},
-    {'cod': '54', 'val': 479.2974738641427},
-    {'cod': '46', 'val': 581.5087883800768},
-    {'cod': '66', 'val': 590.5813042290878},
-    {'cod': '10', 'val': 606.1399751587481},
-    {'cod': '78', 'val': 665.7789925020098},
-    {'cod': '22', 'val': 667.3852504813036},
-    {'cod': '06', 'val': 676.6826799351307},
-    {'cod': '94', 'val': 742.5731871857558},
-    {'cod': '34', 'val': 1096.0113649695222},
-    {'cod': '38', 'val': 1151.4888873898824},
-    ],"colors":["#ffffe5","#f7fcb9","#d9f0a3","#addd8e","#78c679","#41ab5d","#238443","#006837","#004529"],
-    "provincia": "cod",
-    "val": "monto_microcreditos",
-    "title":"","classification":["0","10000","30000","60000","120000","240000","350000"],
-    "datatable":True,"legend":True}
-
-
+content = {
+    "data":[{"Código":74,"Total prestaciones PACH per cápita":114.05231071276813},{"Código":"02","Total prestaciones PACH per cápita":166.89022208667708},{"Código":"14","Total prestaciones PACH per cápita":174.76769243042722},{"Código":"82","Total prestaciones PACH per cápita":206.36935565874847},{"Código":"26","Total prestaciones PACH per cápita":227.98515494495908},{"Código":"50","Total prestaciones PACH per cápita":232.25149899162855},{"Código":"86","Total prestaciones PACH per cápita":285.6783585621371},{"Código":"18","Total prestaciones PACH per cápita":300.2126149066605},{"Código":"42","Total prestaciones PACH per cápita":350.39976229535637},{"Código":"62","Total prestaciones PACH per cápita":408.2176883669293},{"Código":"58","Total prestaciones PACH per cápita":428.95755936613875},{"Código":"30","Total prestaciones PACH per cápita":432.9430691051191},{"Código":"70","Total prestaciones PACH per cápita":471.88685090058203},{"Código":"90","Total prestaciones PACH per cápita":474.4596578892707},{"Código":"54","Total prestaciones PACH per cápita":479.2974738641427},{"Código":"46","Total prestaciones PACH per cápita":581.5087883800768},{"Código":"66","Total prestaciones PACH per cápita":590.5813042290878},{"Código":"10","Total prestaciones PACH per cápita":606.1399751587481},{"Código":"78","Total prestaciones PACH per cápita":665.7789925020098},{"Código":"22","Total prestaciones PACH per cápita":667.3852504813036},{"Código":"06","Total prestaciones PACH per cápita":676.6826799351307},{"Código":"94","Total prestaciones PACH per cápita":742.5731871857558},{"Código":"34","Total prestaciones PACH per cápita":1096.0113649695222},{"Código":"38","Total prestaciones PACH per cápita":1151.4888873898824}],
+    "colors":["#eff3ff","#bdd7e7","#6baed6","#2171b5"],
+    "provincia":"Código",
+    "datos":"Total prestaciones PACH per cápita",
+    "title":"TITLO",
+    "classification":["114.05231071276813","350.39976229535637","742.5731871857558","1151.4888873898824"],
+    "datatable":True,
+    "legend":True,
+    "con_antartida": True,
+    }
 #%%
+file_sin_antartida = 'data/provincias_sin_antartida.geojson'
+file_con_antartida = 'data/provincias_con_antartida.geojson'
 
-print(content)
 # dataframes
-df = pd.DataFrame(content['data'])
-df['id'] = df[content['provincia']]
-file = 'data/provincias_sin_antartida.geojson'
-gdf = gpd.read_file(file)
-df = pd.merge(gdf, df, right_on=['id'], left_on='id')
-df[content['datos']] = df[content['datos']].round(decimals=2)
+df_data = pd.DataFrame(content['data'])
+df_data['id'] = df_data[content['provincia']]
+
+
+gdf_sin_antartida = gpd.read_file(file_sin_antartida)
+
+# si tengo antártida como option lo levanto 
+if content['con_antartida']:
+    gdf_con_antartida = gpd.read_file(file_con_antartida)
+    df_data_con_antartidad = pd.merge(
+        gdf_con_antartida, df_data, right_on='id', left_on='id')
+
+
+df_data = pd.merge(gdf_sin_antartida, df_data, right_on='id', left_on='id')
+
+df_data[content['datos']] = df_data[content['datos']].round(0).astype(int)
 
 # color settings
 cmap_colors = pltcolors.LinearSegmentedColormap.from_list(
     "", content['colors'])
 
-# plot
-ax = df.plot(column=content['datos'],
-             cmap=cmap_colors,
-             figsize=(30, 13),
-             edgecolor="grey",
-             linewidth=0.4,
-             legend=content['legend'],
-             scheme="userdefined",
-             classification_kwds={'bins': [float(i) for i in content['classification']]})
 
-ax.axes.get_xaxis().set_visible(False)
-ax.axes.get_yaxis().set_visible(False)
-plt.title(content['title'])
+df_data
+#%%
+# big plot
+f, ax = plt.subplots(figsize=(30, 13))
+df_data.plot(ax=ax, column=content['datos'],
+        cmap=cmap_colors,
+        figsize=(30, 13),
+        edgecolor="grey",
+        linewidth=0.4,
+        legend=content['legend'],
+        scheme="userdefined",
+        classification_kwds={'bins': [int(float(i)) for i in content['classification']]})
 
-# legend
-if content['legend']:
-    leg = ax.get_legend()
-    leg.set_bbox_to_anchor((1.4, 0.05, 0.2, 0.2))
+# CABA PLOT
+ax_caba = zoomed_inset_axes(ax, 10, loc=7)
 
-# datatable
-if content['datatable']:
-    col_labels = ['Provincia', 'Cantidad']
-    df_table = df[['name', content['datos']]].sort_values(
-        by='name', ascending=True).head(25)
-table_vals = df_table.values.tolist()
+minx,miny,maxx,maxy =  df_data.query('id == "02"').total_bounds
+ax_caba.set_xlim(minx, maxx)
+ax_caba.set_ylim(miny, maxy)
+df_data.query('id == "02"').plot(
+    ax=ax_caba,
+    column=content['datos'],
+    cmap=cmap_colors,
+    figsize=(30, 13),
+    edgecolor="grey",
+    linewidth=0.4,
+    scheme="userdefined",
+    classification_kwds={'bins': [int(float(i)) for i in content['classification']]}
+)
 
-the_table = plt.table(cellText=table_vals,
-                        colWidths=[0]*len(table_vals),
-                        colLabels=col_labels,
-                        loc='right', zorder=3)
-the_table.auto_set_column_width(col=list(range(len(table_vals))))
+dual_ax = mark_inset(ax, ax_caba, loc1=1, loc2=1, fc="none", ec="0.5")
 
-# bytesio output
-aio = io.BytesIO()
+# chart settings
+ax.axes.xaxis.set_ticklabels([])
+ax.axes.yaxis.set_ticklabels([])
+ax_caba.axes.xaxis.set_ticklabels([])
+ax_caba.axes.yaxis.set_ticklabels([])
 
-plt.savefig(aio, format='png', bbox_inches='tight')
-data = base64.encodestring(aio.getvalue())
-
-
-# %%
-# gdf
+# save file to bytess
+arg_file = io.BytesIO()
+plt.savefig(arg_file, format='png', bbox_inches='tight')
 
 
-df
+#%%
+if content['con_antartida']:
+    f, ax_tdf = plt.subplots(figsize=(2, 2))
+    df_data_con_antartidad.plot(
+        ax=ax_tdf,
+        column=content['datos'],
+        cmap=cmap_colors,
+        figsize=(30, 13),
+        edgecolor="grey",
+        linewidth=0.4,
+        scheme="userdefined",
+        classification_kwds={'bins': [float(i)
+                                    for i in content['classification']]}
+    )
+    minx, miny, maxx, maxy =  df_data_con_antartidad.query('id == "94"').total_bounds
+    ax_tdf.set_xlim(minx, maxx)
+    ax_tdf.set_ylim(miny, maxy)
+    plt.setp(ax_tdf.get_xticklabels(), visible=False)
+    plt.setp(ax_tdf.get_yticklabels(), visible=False)
 
-# %%
-df1 = pd.merge(gdf, df, right_on='id', left_on='cod')
+    # save file
+    tdf_file = io.BytesIO()
+    plt.savefig(tdf_file, format='png', bbox_inches='tight')
+
+    # merge pngs
+    background = Image.open(arg_file)
+    foreground = Image.open(tdf_file)
+
+    background.paste(foreground, tuple(map(lambda i, j: i - j-10, background.size, foreground.size)), foreground)
+
+    background.save(arg_file)
+#%%
+from PIL import Image
+
+background = Image.open('arg.png')
+foreground = Image.open('tdf.png')
+
+background.paste(foreground, tuple(map(lambda i, j: i - j-10, background.size, foreground.size)), foreground)
+
+background.save('test.png')
+
+
+#%%
+width, height = background.size
+
+print(background.size)
+print(foreground.size)
+print(tuple(map(lambda i, j: i - j-15, background.size, foreground.size)))
+
+
+#%%
+#bottom_right = (1.4, 0.1)
+
+from textwrap import wrap
+
+content['datos'][:int(len(content['datos'])/2)]
+
+"\n".join(wrap(content['datos'], 20))
+
+#%%
+df_data = pd.DataFrame(content['data'])
+df_data['id'] = df_data[content['provincia']]
+
+#%%
+df_data.iloc[0]
