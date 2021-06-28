@@ -96,12 +96,12 @@ def mapping():
     minx,miny,maxx,maxy =  df_data.query('id == "02"').total_bounds
     ax_caba.set_xlim(minx, maxx)
     ax_caba.set_ylim(miny, maxy)
-    df_data.query('id == "02"').plot(
+    df_data.plot(
         ax=ax_caba,
         column=content['datos'],
         cmap=cmap_colors,
         figsize=(30, 13),
-        edgecolor="grey",
+        edgecolor="black",
         linewidth=0.4,
         scheme="userdefined",
         classification_kwds={'bins': [int(float(i)) for i in content['classification']]}
